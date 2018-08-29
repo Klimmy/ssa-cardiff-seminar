@@ -32,6 +32,17 @@
     2018
 }
 
+\AtBeginSection[]{
+  \begin{frame}
+  \vfill
+  \centering
+  \begin{beamercolorbox}[sep=8pt,center,shadow=true,rounded=true]{title}
+    \usebeamerfont{title}\insertsectionhead\par%
+  \end{beamercolorbox}
+  \vfill
+  \end{frame}
+}
+
 \begin{document}
 
 \begin{frame}
@@ -58,6 +69,7 @@
     \end{itemize}
 \end{frame}
 
+\section{Change point detection}
 
 \begin{frame}
     \frametitle{What is change point detection?}
@@ -65,6 +77,26 @@
     \begin{itemize}
     	\item Change point --- point in time series where some significant change occurred
 	\item Change point detection --- group of methods to find change points in time series
+	\item Change points can be two types:
+		\begin{itemize}
+			\item Local --- one time change
+			\item Global --- change of time series structure 
+		\end{itemize}
+    \end{itemize}
+\end{frame}
+
+\begin{frame}
+    \frametitle{What is change point detection?}
+
+Let's formalize change point detection problem:
+    \begin{itemize}
+	\item Suppose $\mathrm{X} = (x_1, ..., x_N)$ --- time series of length $N$
+	\item $\mathbf{t} = \{t_1,t_2,...\} \subset \{1,...,K\}$ --- set of change points indexes
+	\item $K-1$ --- amount of changes in time series, which can be either known or unknown
+	\item Change point detection problem --- is a problem of searching such set of indexes, which would be the closest to real set of change point indexes: $\widehat{\mathbf{t}} = \{\widehat{t_1},\widehat{t_2},...\} $
+	\item To estimate change point detection algorithm quality we need tagged time series with known indexes $\widehat{\mathbf{t}} = \{\widehat{t_1},\widehat{t_2},...\} $
+	\item Quality can be estimated as sum of distance between real indexes and estimated indexes normalized by length of time series: $$\sum_{i=1}^K \frac{|\widehat{t_i} - t_i|}{N}$$	
+	
     \end{itemize}
 \end{frame}
 
@@ -164,6 +196,114 @@
 \end{frame}
 
 
+\section{Change point detection techniques}
+
+\begin{frame}
+    \frametitle{SSA for change point detection}
+
+Singular spectrum analysis (SSA) method can be used to allocate change points.
+Let $x_1,x_2,...$ be a time series and $N, L, l, p, q$ be fixed integers so that $0 \leq l < L \leq N/2$ and $ 0 \leq p < q$. The SSA change point detection algorithm is as follows.
+For each $ n = 0,1,...$ we compute:
+    \begin{itemize}
+    	\item the base matrix $\mathbb{X}^{(n)}$,
+	\item the lag-covariance matrix $\mathbb{R}_n = \mathbb{X}^{(n)}(\mathbb{X}^{(n)})^{\top}$,
+	\item the SVD of $\mathbb{R}_n$,
+	\item $\mathbf{\nu}_{n.I,p,q}$, the sum of the squared Euclidean distances between the vectors $\mathbb{X}_j^{(n)} (j = p+1,...,q$ and the l-dimensional subspace $L_{n,I}$, and
+	\item $S_n$, the normalized squared distance.
+    \end{itemize}
+ Large values of $S_n$ indicate a change in the time series.
+
+This method has the following parameters:
+	\begin{itemize}
+		\item $N$ --- window size for base matrix
+		\item $L, I$ --- SSA window and number of eigenvectors
+		\item $p, q$ --- window size for test matrix
+		\item threshold
+	\end{itemize}
+\end{frame}
+
+\begin{frame}
+    \frametitle{SSA in action. Mean change}
+
+Let's try to apply SSA algorithm to real time series mentioned above. With manually settled parameters.
+\begin{figure}
+	\textbf{Mean change}
+	\includegraphics[scale=0.10]{images/017_mean_cp}
+	\textbf{Detection}
+	N = 48, L = 24, I = 5, p = 49, q = L, threshold = 0.15
+	\includegraphics[scale=0.10]{images/018_mean_cp_detected}
+\end{figure}
+
+Works good for mean change
+
+\end{frame}
+
+\begin{frame}
+    \frametitle{SSA in action. Variance change}
+
+\begin{figure}
+	\includegraphics[scale=0.10]{images/019_variance_cp}
+	N = 48, L = 24, I = 5, p = 49, q = L, threshold = 0.15
+	\includegraphics[scale=0.10]{images/020_variance_cp_detected}
+\end{figure}
+
+Works good for variance change
+
+\end{frame}
+
+\begin{frame}
+    \frametitle{SSA in action. Period change}
+
+\begin{figure}
+	\includegraphics[scale=0.10]{images/025_period_cp}
+	N = 48, L = 24, I = 5, p = 49, q = L, threshold = 0.1
+	\includegraphics[scale=0.10]{images/026_period_cp_detected}
+\end{figure}
+
+Works well for period change
+
+\end{frame}
+
+
+\begin{frame}
+    \frametitle{SSA in action. Point change}
+
+\begin{figure}
+	\includegraphics[scale=0.10]{images/021_point_cp}
+	N = 48, L = 24, I = 5, p = 49, q = L, threshold = 0.1
+	\includegraphics[scale=0.10]{images/022_point_cp_detected}
+\end{figure}
+
+Doesn't work for point change.
+The reason is that we always move window from left to the right.
+
+\end{frame}
+
+\begin{frame}
+    \frametitle{SSA in action. Point change}
+    
+Let's try to reverse the time series each time we find change point.
+
+\begin{figure}
+	\includegraphics[scale=0.10]{images/023_point_cp_2}
+	N = 48, L = 24, I = 5, p = 49, q = L, threshold = 0.1
+	\includegraphics[scale=0.10]{images/024_point_cp_detected_2}
+\end{figure}
+
+Using this upgrade we make SSA algorithm working for point change as well
+
+\end{frame}
+
+
+\begin{frame}
+    \frametitle{SSA in action. Parameters}
+    
+Now let's try to fit SSA parameters automatically for change point detection.
+
+\end{frame}
+
+
+\section{Airpush cases}
 
 \begin{frame}
     \frametitle{Airpush cases. Fraud elimination}
