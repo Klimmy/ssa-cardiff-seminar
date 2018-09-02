@@ -296,10 +296,180 @@ Using this upgrade we make SSA algorithm working for point change as well
 
 
 \begin{frame}
-    \frametitle{SSA in action. Parameters}
-    
-Now let's try to fit SSA parameters automatically for change point detection.
+    \frametitle{Long time series}
 
+	\begin{itemize}
+		\item We have 5 time series 2856 points each. It is impressions time series for different countries hourly for 17 weeks.
+		\item We have tagged change points manually in all these time series
+	\end{itemize}
+
+\end{frame}
+
+
+\begin{frame}
+    \frametitle{Country A}
+\begin{figure}
+	\includegraphics[scale=0.30]{images/028_country_a}
+	In time series for Country A we manually detected 6 change points. First one - mean change along with variance change. Second one - variance change. Third one - point change. Fourth one - variance change. Fifth and sixth - points change.
+\end{figure}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Country B}
+\begin{figure}
+	\includegraphics[scale=0.30]{images/029_country_b}
+	In time series for Country B we manually detected 2 change points. First one - mean change along with variance change. Second one - mean change along with variance change.
+\end{figure}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Country C}
+\begin{figure}
+	\includegraphics[scale=0.30]{images/030_country_c}
+	In time series for Country C we manually detected 5 change points. First, second and fifth - mean change along with variance change (similar to country A). Third - variance change. Fourth - point change
+\end{figure}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Country D}
+\begin{figure}
+	\includegraphics[scale=0.30]{images/031_country_d}
+	In time series for Country D only one change point was manually detected - mean change along with variance change.
+\end{figure}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Country E}
+\begin{figure}
+	\includegraphics[scale=0.30]{images/032_country_e}
+	In time series for Country E there is only one change point - mean change.
+\end{figure}
+\end{frame}
+
+
+
+
+\begin{frame}
+    \frametitle{Another change point detection approach}
+	
+	\begin{itemize}
+		\item Apart from SSA there is another approach to find change points
+		\item We can define change point detection problem as minimizing contrast function:
+		$$ \mathbb{V}(\mathbf{t},\mathrm{X}) := \sum_{i=1}^K c(x_{t_i}...x_{t+1}) $$, where $c()$ --- some cost function, and $x_{t_i}...x_{t+1}$ --- sub series of initial time series
+		\item When quantity of change points $K$ is known the problem is:
+		$$ \min_t{\mathbb{V}(\mathbf{t},\mathrm{X})} $$
+		\item When quantity of change points unknown, then additional parameter penalty is added:
+		$$ \min_t{\mathbb{V}(\mathbf{t},\mathrm{X})} + pen(\mathbf{t},\mathrm{X}) $$
+	\end{itemize}
+
+Thus, such approach can be described as follows steps:
+
+	\begin{itemize}
+		\item Choosing cost function
+		\item Minimizing contrast function
+		\item Searching for change points quantity (when unknown beforehand)
+	\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+    \frametitle{Cost functions}
+	
+	There could be plenty of cost functions. Let's describe the most popular
+	\begin{itemize}
+		\item Mean absolute deviation. It finds changes in medians.
+		$$ c(\mathbf{X}_I) = \sum_{t \in I}||\mathbf{X}_t - \bar{\mathbf{X}} ||_1 $$
+		\item Mean squared deviation. It finds changes in means.
+		$$ c(\mathbf{X}_I) = \sum_{t \in I}||\mathbf{X}_t - \bar{\mathbf{X}} ||_2^2 $$
+		\item Kernel based method
+		$$ c(\mathbf{X}_I) = \sum_{t\in I} ||\Phi (\mathbf{X}_t) - \bar{\mu} ||_{\mathcal{H}}^2 $$
+		\item Autoregression
+		$$ c(\mathbf{X}_I) = \min_{\delta \in \mathbb{R}_p}\sum||\mathbf{X}_t - \delta'z_t||_2^2 $$
+	\end{itemize}
+
+
+\end{frame}
+
+
+\begin{frame}
+    \frametitle{Cost functions. Continue}
+	
+	We can also create our own cost function.
+	Fore example, according to understanding of our time series we can assume that it can be described with such model:
+	$$ \mathrm{X} = a + C\cos(2\pi \frac{n}{24}) + S \sin(2\pi \frac{n}{24}) + \epsilon $$
+	Then cost function can be:
+	$$ c(\mathbf{X}_I) = \sum_{t \in I}||\mathbf{X}_t - (a + C\cos(2\pi \frac{n}{24}) + S \sin(2\pi \frac{n}{24})) ||_2^2 $$
+\end{frame}
+
+\begin{frame}
+    \frametitle{Search method}
+	
+	Apart from cost function we need to choose method of search change points.
+	There are several well researched methods, we will use one of them --- window method.
+	Idea is straightforward: 
+	\begin{itemize}
+		\item Choosing wide of the window $w$
+		\item Then algorithm slides across the time series with this window
+		\item On each iteration it splits time series into two sub series
+		\item Then for each sub series special metric is calculated:
+		$$ d(x_{u..v},x_{v..w}) = c(x_{u..w}) - c(x_{u..v}) - c(x_{v..w}) $$
+	\end{itemize}
+	
+\end{frame}
+
+
+\begin{frame}
+    \frametitle{Applying approach to the real data}
+	
+	Let's try to apply all of the mentioned cost functions to the time series described above
+	\begin{table}[]
+\begin{tabular}{llllll}
+          & custom function & L1     & L2     & RBF    & Autoregression \\
+Country A & 1.3582          & 0.2507 & 1.305  & 0.6877 & 2.3939         \\
+Country B & 0.3312          & 0.0942 & 0.3312 & 0.8267 & 0.4111         \\
+Country C & 1.2686          & 0.3407 & 1.1478 & 0.4265 & 1.6971         \\
+Country D & 0.0007          & 0.0007 & 0.0007 & 0.0011 & 0.0025         \\
+Country E & 0.4982          & 0.013  & 0.7521 & 0.0042 & 0.3022        
+\end{tabular}
+\end{table}
+
+The best result shows $L_1$ cost function (mean absolute deviation).
+	
+\end{frame}
+
+\begin{frame}
+    \frametitle{Applying approach to the real data. Contine}
+	
+	Let's take a look on the data
+\begin{figure}
+	\includegraphics[scale=0.10]{images/033_country_a_cp}
+	\includegraphics[scale=0.10]{images/034_country_b_cp}
+	\includegraphics[scale=0.10]{images/035_country_c_cp}
+	\includegraphics[scale=0.10]{images/036_country_d_cp}
+	\includegraphics[scale=0.10]{images/037_country_e_cp}
+\end{figure}
+
+Most of the time looks pretty good.
+\end{frame}
+
+\begin{frame}
+    \frametitle{Applying approach to the real data. Contine}
+	
+	Above case was when we defined number of change points in advance. But in real life problems most of the time do not know it.
+	Thus let's try to calculate quantity of change points, using following penalty function:
+	$$ pen_{BIC, L_2}(t) := \sigma \log{T}, $$
+	Here is the results on number of change points:
+	
+	Country A --- Actual amount: 8; Predicted amount: 5 
+	
+	Country B  --- Actual amount: 2; Predicted amount: 2 
+	
+	Country C --- Actual amount: 6; Predicted amount: 6 
+
+	Country D --- Actual amount: 1; Predicted amount: 2 
+	
+	Country E --- Actual amount: 1; Predicted amount: 1 
+	
 \end{frame}
 
 
