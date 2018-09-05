@@ -24,12 +24,12 @@
 \title{Change point detection in mobile advertising}
 \author{Nina Golyandina, Kliment Merzlyakov}
 \institute{Saint Petersburg State University \\
-    Mathematical faculty \\
-     Applied statistics department \\
+     Statistical modeling department \\
 }
 \date{
-    Saint Petersburg\\
-    2018
+    Statistical methods and Machine Learning in Internet Advertising\\
+    London\\
+    17.10.2018
 }
 
 \AtBeginSection[]{
@@ -79,38 +79,90 @@
 	\item Change point detection --- group of methods to find change points in time series
 	\item Change points can be two types:
 		\begin{itemize}
-			\item Local --- one time change
+			\item Local --- single change or outlier
 			\item Global --- change of time series structure 
 		\end{itemize}
+	\begin{figure}
+		\textbf{Local change point}\par\medskip
+		\includegraphics[scale=0.10]{images/local_cp}
+		\textbf{Global change point}\par\medskip
+		\includegraphics[scale=0.10]{images/global_cp}
+	\end{figure}
     \end{itemize}
 \end{frame}
+
 
 \begin{frame}
-    \frametitle{What is change point detection?}
-
-Let's formalize change point detection problem:
+    \frametitle{Why do we care?}
+When it helps:
     \begin{itemize}
-	\item Suppose $\mathrm{X} = (x_1, ..., x_N)$ --- time series of length $N$
-	\item $\mathbf{t} = \{t_1,t_2,...\} \subset \{1,...,K\}$ --- set of change points indexes
-	\item $K-1$ --- amount of changes in time series, which can be either known or unknown
-	\item Change point detection problem --- is a problem of searching such set of indexes, which would be the closest to real set of change point indexes: $\widehat{\mathbf{t}} = \{\widehat{t_1},\widehat{t_2},...\} $
-	\item To estimate change point detection algorithm quality we need tagged time series with known indexes $\widehat{\mathbf{t}} = \{\widehat{t_1},\widehat{t_2},...\} $
-	\item Quality can be estimated as sum of distance between real indexes and estimated indexes normalized by length of time series: $$\sum_{i=1}^K \frac{|\widehat{t_i} - t_i|}{N}$$	
-	
+    	\item Forecasting
+	\item Extracting trend more accurately
+    	\item Searching issues in historical data 
+	\item Reacting on changes quickly
     \end{itemize}
+   
+	\begin{figure}
+		\textbf{Without CP detection}\par\medskip
+		\includegraphics[scale=0.05]{images/trend_fallacy}
+		\textbf{With CP detection}\par\medskip
+		\includegraphics[scale=0.05]{images/trend_succeed}
+	\end{figure}
+    
+What can we do:
+    \begin{itemize}
+    	\item Remove/change outliers or use robust methods
+	\item Split time series and analyze separately
+    \end{itemize}
+
 \end{frame}
+
+
+
+% \begin{frame}
+%     \frametitle{What is change point detection?}
+% 
+% Let's formalize change point detection problem:
+%     \begin{itemize}
+% 	\item Suppose $\mathrm{X} = (x_1, ..., x_N)$ --- time series of length $N$
+% 	\item $\mathbf{t} = \{t_1,t_2,...\} \subset \{1,...,K\}$ --- set of change points indexes
+% 	\item $K-1$ --- amount of changes in time series, which can be either known or unknown
+% 	\item Change point detection problem --- is a problem of searching such set of indexes, which would be the closest to real set of change point indexes: $\widehat{\mathbf{t}} = \{\widehat{t_1},\widehat{t_2},...\} $
+%  	\item To estimate change point detection algorithm quality we need tagged time series with known indexes $\widehat{\mathbf{t}} = \{\widehat{t_1},\widehat{t_2},...\} $
+% 	\item Quality can be estimated as sum of distance between real indexes and estimated indexes normalized by length of time series: $$\sum_{i=1}^K \frac{|\widehat{t_i} - t_i|}{N}$$	
+	
+%     \end{itemize}
+% \end{frame}
+
+
 
 \begin{frame}
     \frametitle{Types of change points}
 
+
+  \begin{columns}[T,onlytextwidth]
+      \column{0.5\textwidth}
     \begin{itemize}
     	\item Trend change
 	\item Mean change
 	\item Variance change
 	\item Single point change
-	\item Period change
-	\item Structure change
+	\item Periodic component change
     \end{itemize}
+
+    \column{0.5\textwidth}
+
+	\begin{figure}
+		\includegraphics[scale=0.07]{images/examples_trend}
+		\includegraphics[scale=0.07]{images/examples_mean}
+		\includegraphics[scale=0.07]{images/examples_variance}
+		\includegraphics[scale=0.07]{images/examples_outlier}
+		\includegraphics[scale=0.07]{images/examples_periodic}
+	\end{figure}
+
+     \end{columns}
+
+
 \end{frame}
 
 \begin{frame}
@@ -183,16 +235,6 @@ Let's formalize change point detection problem:
 \textbf{Structure change}\par\medskip
 \includegraphics[scale=0.30]{images/006_structure}
 \end{figure}
-\end{frame}
-
-\begin{frame}
-    \frametitle{Reasons to detect change points}
-
-    \begin{itemize}
-    	\item Searching issues in historical data 
-	\item Reacting on changes quickly
-	\item Extracting trend more accurately
-    \end{itemize}
 \end{frame}
 
 
