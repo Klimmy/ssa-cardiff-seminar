@@ -166,34 +166,58 @@ What can we do:
 \end{frame}
 
 \begin{frame}
-\frametitle{Change point examples}
+\frametitle{Airpush data description}
+
+     Request > Impression > Click > Conversion
+     
 \begin{figure}
-\textbf{Common graph}\par\medskip
-\includegraphics[scale=0.30]{images/001_normal_1}
+\includegraphics[scale=0.02]{images/scheme_request}
+\includegraphics[scale=0.05]{images/scheme_impression}
+\includegraphics[scale=0.02]{images/scheme_click}
+\includegraphics[scale=0.02]{images/scheme_conversion}
+\end{figure}
+
+\begin{figure}
+\textbf{Typical day}\par\medskip
+\includegraphics[scale=0.10]{images/examples_day}
+\end{figure}
+
+\begin{figure}
+\textbf{Typical weekend}\par\medskip
+\includegraphics[scale=0.10]{images/examples_weekend}
+\end{figure}
+
+\end{frame}
+
+\begin{frame}
+\frametitle{Airpush data example}
+\begin{figure}
+\textbf{Typical hourly impressions}\par\medskip
+\includegraphics[scale=0.30]{images/examples_month}
 \end{figure}
 \end{frame}
 
 \begin{frame}
-\frametitle{Change point examples}
+\frametitle{Airpush data example}
 \begin{figure}
-\textbf{Common graph with trend}\par\medskip
-\includegraphics[scale=0.30]{images/001_normal_2}
+\textbf{Typical hourly impressions}\par\medskip
+\includegraphics[scale=0.30]{images/examples_month_2}
 \end{figure}
 \end{frame}
 
 \begin{frame}
-\frametitle{Change point examples}
+\frametitle{Airpush data example}
 \begin{figure}
-\textbf{Common graph without trend}\par\medskip
-\includegraphics[scale=0.30]{images/001_normal_3}
+\textbf{Typical hourly impressions}\par\medskip
+\includegraphics[scale=0.30]{images/examples_month_3}
 \end{figure}
 \end{frame}
 
 \begin{frame}
-\frametitle{Change point examples}
+\frametitle{Airpush data example}
 \begin{figure}
-\textbf{Common graph periodic frequency}\par\medskip
-\includegraphics[scale=0.30]{images/001_normal_4}
+\textbf{Typical hourly impressions}\par\medskip
+\includegraphics[scale=0.30]{images/examples_month_4}
 \end{figure}
 \end{frame}
 
@@ -201,30 +225,15 @@ What can we do:
 \frametitle{Change point examples}
 \begin{figure}
 \textbf{Mean change}\par\medskip
-\includegraphics[scale=0.30]{images/002_mean}
+\includegraphics[scale=0.30]{images/1_examples_mean}
 \end{figure}
 \end{frame}
+
 
 \begin{frame}
 \frametitle{Change point examples}
 \begin{figure}
-\textbf{Variance change}\par\medskip
-\includegraphics[scale=0.30]{images/003_variance}
-\end{figure}
-\end{frame}
-
-\begin{frame}
-\frametitle{Change point examples}
-\begin{figure}
-\textbf{Trend change}\par\medskip
-\includegraphics[scale=0.30]{images/004_trend}
-\end{figure}
-\end{frame}
-
-\begin{frame}
-\frametitle{Change point examples}
-\begin{figure}
-\textbf{Point change}\par\medskip
+\textbf{Single point change (outlier)}\par\medskip
 \includegraphics[scale=0.30]{images/005_point}
 \end{figure}
 \end{frame}
@@ -232,13 +241,67 @@ What can we do:
 \begin{frame}
 \frametitle{Change point examples}
 \begin{figure}
-\textbf{Structure change}\par\medskip
+\textbf{Periodic component change}\par\medskip
 \includegraphics[scale=0.30]{images/006_structure}
 \end{figure}
 \end{frame}
 
 
 \section{Change point detection techniques}
+
+
+\begin{frame}
+    \frametitle{Methods}
+
+  \begin{columns}[T,onlytextwidth]
+      \column{0.5\textwidth}
+      Naïve approach 
+    \begin{itemize}
+    	\item Calculate \% difference with previous period
+	\item Compare difference with threshold
+    \end{itemize}
+
+     \end{columns}
+
+\end{frame}
+
+
+\begin{frame}
+    \frametitle{Methods}
+
+  \begin{columns}[T,onlytextwidth]
+      \column{0.5\textwidth}
+	Prediction based approach
+	    \begin{itemize}
+	    	\item Predict with appropriate model
+		\item Calculate difference between prediction and actual data (with appropriate cost function)
+		\item Compare difference with threshold
+	    \end{itemize}
+	Numbers of change points is unknown
+
+     \end{columns}
+
+\end{frame}
+
+
+\begin{frame}
+    \frametitle{Methods}
+
+  \begin{columns}[T,onlytextwidth]
+      \column{0.5\textwidth}
+	Approximation based approach
+	    \begin{itemize}
+	    	\item Approximate time series with appropriate model
+		\item Calculate difference between approximation and actual data (with appropriate cost function)
+		\item Find points to minimize difference
+	    \end{itemize}
+	Number of change points can be either known and unknown
+
+     \end{columns}
+
+\end{frame}
+
+
 
 \begin{frame}
     \frametitle{SSA for change point detection}
