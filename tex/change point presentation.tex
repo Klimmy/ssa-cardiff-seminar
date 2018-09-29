@@ -1,5 +1,6 @@
 \documentclass[intlimits, 9pt, unicode]{beamer} 
 
+\mode<presentation>
 \usepackage[T2A]{fontenc}
 %\usepackage[cp1251]{inputenc}
 \usepackage[utf8]{inputenc}
@@ -13,21 +14,21 @@
 \usepackage{beamerthemesplit}
 
 \usetheme{Warsaw}
-
-\setbeamerfont{institute}{size=\normalsize}
-
-\setbeamercolor{bluetext_color}{fg=blue}
-\newcommand{\bluetext}[1]{{\usebeamercolor[fg]{bluetext_color}#1}}
+\setbeamertemplate{page number in head/foot}[totalframenumber]
 
 \setbeamercovered{transparent}
+\beamertemplatenavigationsymbolsempty
 
-\title{Change point detection in mobile advertising}
+
+
+\title{Deciphering internet traffic patterns}
 \author{Nina Golyandina, Kliment Merzlyakov}
 \institute{Saint Petersburg State University \\
      Statistical modeling department \\
+    Airpush
 }
 \date{
-    Statistical methods and Machine Learning in Internet Advertising\\
+    Unlock customer lifetime value with advanced statistical techniques\\
     London\\
     17.10.2018
 }
@@ -43,6 +44,7 @@
   \end{frame}
 }
 
+
 \begin{document}
 
 \begin{frame}
@@ -53,47 +55,141 @@
     \frametitle{Content}
 
     \begin{itemize}
-    	\item Change point detection
-		     	 \begin{itemize}
-	    		   \item What is change point detection?
-		    	   \item Real world examples of change point detection 
-		    	   \item Reasons to detect change points
-		    	  \end{itemize}
+    	\item Change point detection. General notes
+	\item Mobile advertising data
         \item Change point detection techniques
-        \item Airpush cases
-		     	 \begin{itemize}
-	    		   \item Fraud elimination
-		    	   \item Trend extraction
-		    	   \item Smart alerts
-		    	  \end{itemize}
+        \item Applications to real data
     \end{itemize}
+    
+    
 \end{frame}
 
-\section{Change point detection}
+
+
+\section{Change point detection. General notes}
+
+% \begin{frame}
+%     \frametitle{Example}
+% 
+%         \begin{figure}
+%         \centering 
+% 	\textbf{Volume of ads served for specific country}
+%         \includegraphics[height=4.5cm]{images/introduction_example}
+% 	\end{figure}
+	
+%     \begin{itemize}
+%     	\item Evening change of advertising software
+% 	\item Fixed only at morning
+% 	\item It's important to detect it automatically and correct it
+%     \end{itemize}
+% \end{frame}
+
+
+\begin{frame}
+    \frametitle{Changes in data}
+    
+       {\begin{columns}
+        \begin{column}{5cm}
+        User side changes
+         \begin{itemize}
+    		\item Application popularity
+		\item Competition
+		\item Applications' marketing activity
+		\item ...
+   	 \end{itemize}
+        \end{column}
+
+        \begin{column}{5cm}
+        Advertising network side changes
+         \begin{itemize}
+    		\item New features released
+		\item New advertisers onboarded
+		\item New targeting strategy
+		\item ...
+   	 \end{itemize}
+	 \end{column}
+    \end{columns}}
+
+ \end{frame}
+
+
+\begin{frame}
+    \frametitle{Time series}
+	
+    {\begin{columns}
+        \begin{column}{5cm}
+ Time series - is a sequence of numbers sorted by time (minute, hour, day, week, etc.)
+
+\begin{table}[h!]
+\centering
+ \begin{tabular}{||c c||} 
+ \hline
+ Time & Data \\ [0.5ex] 
+ \hline\hline
+ 17-Oct-2018 19:00 & 435 098 \\ 
+ \hline
+ 17-Oct-2018 20:00 & 431 248  \\
+ \hline
+ 17-Oct-2018 21:00 & 420 329  \\
+ \hline
+ ... & ... \\ [1ex] 
+ \hline
+\end{tabular}
+\end{table}
+
+	
+ $ X = (x_1, x_2, ... , x_{N-1} , x_N)  $
+
+        \end{column}
+
+        \begin{column}{5cm}
+Commonly time series can be decomposed $X = T + S + E$
+        \begin{figure}
+        \centering 
+	\textbf{Time series. Decomposition example}
+        \includegraphics[height=4.5cm]{images/tsDecompPlot}
+	\end{figure}
+	
+        \end{column}
+    \end{columns}}
+\end{frame}
 
 \begin{frame}
     \frametitle{What is change point detection?}
 
     \begin{itemize}
-    	\item Change point --- point in time series where some significant change occurred
+    	\item Change point --- point in time series where some significant change in structure occurred
 	\item Change point detection --- group of methods to find change points in time series
 	\item Change points can be two types:
 		\begin{itemize}
-			\item Local --- single change or outlier
+			\item Local --- anomaly or outlier
 			\item Global --- change of time series structure 
 		\end{itemize}
-	\begin{figure}
-		\textbf{Local change point}\par\medskip
-		\includegraphics[scale=0.10]{images/local_cp}
-		\textbf{Global change point}\par\medskip
-		\includegraphics[scale=0.10]{images/global_cp}
-	\end{figure}
     \end{itemize}
+
+    {\begin{columns}
+        \begin{column}{5cm}
+        \begin{figure}
+        \centering 
+	\textbf{Local change point}
+        \includegraphics[height=3.5cm]{images/local_cp}
+	\end{figure}
+        \end{column}
+
+        \begin{column}{5cm}
+	\begin{figure}
+    	\centering
+	\textbf{Global change point}
+        \includegraphics[height=3.5cm]{images/global_cp}
+	\end{figure}
+        \end{column}
+    \end{columns}}
+    
 \end{frame}
 
 
 \begin{frame}
-    \frametitle{Why do we care?}
+    \frametitle{Motivation}
 When it helps:
     \begin{itemize}
     	\item Forecasting
@@ -102,12 +198,22 @@ When it helps:
 	\item Reacting on changes quickly
     \end{itemize}
    
+   
+   \begin{columns}
+        \begin{column}{5cm}
 	\begin{figure}
-		\textbf{Without CP detection}\par\medskip
-		\includegraphics[scale=0.05]{images/trend_fallacy}
-		\textbf{With CP detection}\par\medskip
-		\includegraphics[scale=0.05]{images/trend_succeed}
+		\textbf{Without CP detection}
+		\includegraphics[height=3.5cm]{images/trend_fallacy}
 	\end{figure}
+        \end{column}
+        
+        \begin{column}{5cm}
+	\begin{figure}
+		\textbf{With CP detection}
+		\includegraphics[height=3.5cm]{images/trend_succeed}
+	\end{figure}
+        \end{column}
+    \end{columns}
     
 What can we do:
     \begin{itemize}
@@ -118,79 +224,151 @@ What can we do:
 \end{frame}
 
 
-
-% \begin{frame}
-%     \frametitle{What is change point detection?}
-% 
-% Let's formalize change point detection problem:
-%     \begin{itemize}
-% 	\item Suppose $\mathrm{X} = (x_1, ..., x_N)$ --- time series of length $N$
-% 	\item $\mathbf{t} = \{t_1,t_2,...\} \subset \{1,...,K\}$ --- set of change points indexes
-% 	\item $K-1$ --- amount of changes in time series, which can be either known or unknown
-% 	\item Change point detection problem --- is a problem of searching such set of indexes, which would be the closest to real set of change point indexes: $\widehat{\mathbf{t}} = \{\widehat{t_1},\widehat{t_2},...\} $
-%  	\item To estimate change point detection algorithm quality we need tagged time series with known indexes $\widehat{\mathbf{t}} = \{\widehat{t_1},\widehat{t_2},...\} $
-% 	\item Quality can be estimated as sum of distance between real indexes and estimated indexes normalized by length of time series: $$\sum_{i=1}^K \frac{|\widehat{t_i} - t_i|}{N}$$	
-	
-%     \end{itemize}
-% \end{frame}
-
-
-
 \begin{frame}
     \frametitle{Types of change points}
 
-
-  \begin{columns}[T,onlytextwidth]
-      \column{0.5\textwidth}
-    \begin{itemize}
-    	\item Trend change
-	\item Mean change
-	\item Variance change
-	\item Single point change
-	\item Periodic component change
-    \end{itemize}
-
-    \column{0.5\textwidth}
-
-	\begin{figure}
-		\includegraphics[scale=0.07]{images/examples_trend}
-		\includegraphics[scale=0.07]{images/examples_mean}
-		\includegraphics[scale=0.07]{images/examples_variance}
-		\includegraphics[scale=0.07]{images/examples_outlier}
-		\includegraphics[scale=0.07]{images/examples_periodic}
+\begin{columns}
+ \begin{column}{0.5\textwidth}
+ 
+  \begin{columns}
+      \begin{column}{0.3\textwidth}
+      \centering
+      Trend change
+      \end{column}
+      \begin{column}{0.5\textwidth}
+      \begin{figure}
+		\includegraphics[scale=0.08]{images/examples_trend}
 	\end{figure}
-
+	\end{column}
+     \end{columns}
+     
+  \begin{columns}
+      \begin{column}{0.3\textwidth}
+      \centering
+      Mean change
+      \end{column}
+      \begin{column}{0.5\textwidth}
+      \begin{figure}
+		\includegraphics[scale=0.08]{images/examples_mean}
+	\end{figure}
+	\end{column}
+     \end{columns}
+     
+  \begin{columns}
+      \begin{column}{0.3\textwidth}
+      \centering
+      Variance change
+      \end{column}
+      \begin{column}{0.5\textwidth}
+      \begin{figure}
+		\includegraphics[scale=0.08]{images/examples_variance}
+	\end{figure}
+	\end{column}
      \end{columns}
 
+	\end{column}
 
-\end{frame}
-
-\begin{frame}
-\frametitle{Airpush data description}
-
-     Request > Impression > Click > Conversion
+ \begin{column}{0.5\textwidth}
      
-\begin{figure}
-\includegraphics[scale=0.02]{images/scheme_request}
-\includegraphics[scale=0.05]{images/scheme_impression}
-\includegraphics[scale=0.02]{images/scheme_click}
-\includegraphics[scale=0.02]{images/scheme_conversion}
-\end{figure}
+  \begin{columns}
+      \begin{column}{0.3\textwidth}
+      \centering
+      Local change
+      \end{column}
+      \begin{column}{0.5\textwidth}
+      \begin{figure}
+		\includegraphics[scale=0.08]{images/examples_outlier}
+	\end{figure}
+	\end{column}
+     \end{columns}
+     
+  \begin{columns}
+      \begin{column}{0.3\textwidth}
+      \centering
+      Periodic component change
+      \end{column}
+      \begin{column}{0.5\textwidth}
+      \begin{figure}
+		\includegraphics[scale=0.08]{images/examples_periodic}
+	\end{figure}
+	\end{column}
+     \end{columns}
 
-\begin{figure}
-\textbf{Typical day}\par\medskip
-\includegraphics[scale=0.10]{images/examples_day}
-\end{figure}
+	\end{column}
+	
+     \end{columns}
+     
+\end{frame}
 
-\begin{figure}
-\textbf{Typical weekend}\par\medskip
-\includegraphics[scale=0.10]{images/examples_weekend}
-\end{figure}
+
+\section{Mobile advertising data}
+
+
+\begin{frame}
+\frametitle{Real data description}
+
+   \begin{columns}
+    \begin{column}{0.25\textwidth}
+    \centering
+     Request  
+     \begin{figure}
+	\includegraphics[height=1cm]{images/scheme_request}
+     \end{figure}
+     \end{column}
+    \begin{column}{0.001\textwidth}
+    \centering
+	>
+     \end{column}
+    \begin{column}{0.25\textwidth}
+    \centering
+    Impression  
+     \begin{figure}
+	\includegraphics[height=1cm]{images/scheme_impression}
+     \end{figure}
+    \end{column}
+    \begin{column}{0.001\textwidth}
+    \centering
+    >
+    \end{column}
+    \begin{column}{0.25\textwidth}
+    \centering
+    Click
+     \begin{figure}
+	\includegraphics[height=1cm]{images/scheme_click}
+     \end{figure}
+    \end{column}
+    \begin{column}{0.001\textwidth}
+    \centering
+    >
+    \end{column}
+    \begin{column}{0.25\textwidth}
+    \centering
+     Conversion
+     \begin{figure}
+	\includegraphics[height=1cm]{images/scheme_conversion}
+     \end{figure}     
+     \end{column}
+     \end{columns}
+
+   \begin{columns}
+    \begin{column}{0.5\textwidth}
+	\begin{figure}
+	\textbf{Typical day}\par\medskip
+	\includegraphics[height=4.5cm]{images/examples_day}
+	\end{figure}
+     \end{column}
+    \begin{column}{0.5\textwidth}
+	\begin{figure}
+	\textbf{Typical weekend}\par\medskip
+	\includegraphics[height=4.5cm]{images/examples_weekend}
+	\end{figure}
+     \end{column}
+     \end{columns}
 
 \end{frame}
 
 \begin{frame}
-\frametitle{Airpush data example}
+\frametitle{Real data example}
 \begin{figure}
 \textbf{Typical hourly impressions}\par\medskip
 \includegraphics[scale=0.30]{images/examples_month}
@@ -198,7 +376,7 @@ What can we do:
 \end{frame}
 
 \begin{frame}
-\frametitle{Airpush data example}
+\frametitle{Real data example}
 \begin{figure}
 \textbf{Typical hourly impressions}\par\medskip
 \includegraphics[scale=0.30]{images/examples_month_2}
@@ -206,18 +384,10 @@ What can we do:
 \end{frame}
 
 \begin{frame}
-\frametitle{Airpush data example}
+\frametitle{Real data example}
 \begin{figure}
 \textbf{Typical hourly impressions}\par\medskip
 \includegraphics[scale=0.30]{images/examples_month_3}
-\end{figure}
-\end{frame}
-
-\begin{frame}
-\frametitle{Airpush data example}
-\begin{figure}
-\textbf{Typical hourly impressions}\par\medskip
-\includegraphics[scale=0.30]{images/examples_month_4}
 \end{figure}
 \end{frame}
 
@@ -233,7 +403,7 @@ What can we do:
 \begin{frame}
 \frametitle{Change point examples}
 \begin{figure}
-\textbf{Single point change (outlier)}\par\medskip
+\textbf{Local change (outlier)}\par\medskip
 \includegraphics[scale=0.30]{images/005_point}
 \end{figure}
 \end{frame}
@@ -250,25 +420,99 @@ What can we do:
 \section{Change point detection techniques}
 
 
+%\begin{frame}
+  %  \frametitle{Methods}
+
+
+
+%  \begin{columns}[T,onlytextwidth]
+  %    \column{0.5\textwidth}
+    %  Naïve approach 
+    %\begin{itemize}
+    %	\item Calculate \% difference with previous period
+%	\item Compare difference with threshold
+  %  \end{itemize}
+
+%     \end{columns}
+
+%\end{frame}
+
+% \begin{frame}
+%    \frametitle{General framework description}
+%
+% 	    \begin{itemize}
+% 		\item Algorithm:
+% 		\begin{itemize}
+% 			\item Cost value is calculated for sliding windows of time series
+% 			\item Cost value represents how different our model from actual data
+% 			\item Once cost value more than threshold - algorithm detects change point
+% 		\end{itemize}
+% 		\item Types:
+% 		\begin{itemize}
+% 			\item Prediction based
+% 			\item Approximation based
+% 		\end{itemize}
+% 	    	\item Input:
+% 		\begin{itemize}
+% 			\item Window size
+% 			\item Model
+% 			\item Cost function
+% 			\item Threshold
+% 			\item Search method
+% 		\end{itemize}
+% 	    \end{itemize}
+
+% \end{frame}
+
+
 \begin{frame}
-    \frametitle{Methods}
+    \frametitle{General framework description}
 
-  \begin{columns}[T,onlytextwidth]
-      \column{0.5\textwidth}
-      Naïve approach 
-    \begin{itemize}
-    	\item Calculate \% difference with previous period
-	\item Compare difference with threshold
-    \end{itemize}
-
-     \end{columns}
+	    \begin{itemize}
+		\item Preliminaries:
+		\begin{itemize}
+			\item Time series has structure
+			\item Structure can be described by model
+		\end{itemize}
+		\item Idea:
+		\begin{itemize}
+			\item Around CP, model describes time series worse
+			\item We can calculate this "worseness" using cost function
+			\item Once cost value more than threshold - algorithm detects change point
+		\end{itemize}
+		\item Types:
+		\begin{itemize}
+			\item Prediction based
+			\item Approximation based
+		\end{itemize}
+	    \end{itemize}
 
 \end{frame}
 
 
-\begin{frame}
-    \frametitle{Methods}
 
+\begin{frame}
+    \frametitle{Prediction approach}
+
+  \begin{columns}[T,onlytextwidth]
+      \column{0.5\textwidth}
+	\textbf{Prediction based approach}
+	    \begin{itemize}
+	    	\item Predict with appropriate model
+		\item Calculate difference between prediction and actual data (with appropriate cost function)
+		\item Compare difference with threshold
+	    \end{itemize}
+      \column{0.5\textwidth}
+      Example: change in mean
+      \begin{figure}
+	\includegraphics[scale=0.2]{images/approaches_first_1}
+	\end{figure}
+     \end{columns}
+
+\end{frame}
+
+\begin{frame}
+    \frametitle{Prediction approach}
   \begin{columns}[T,onlytextwidth]
       \column{0.5\textwidth}
 	Prediction based approach
@@ -277,396 +521,484 @@ What can we do:
 		\item Calculate difference between prediction and actual data (with appropriate cost function)
 		\item Compare difference with threshold
 	    \end{itemize}
-	Numbers of change points is unknown
-
+      \column{0.5\textwidth}
+      Example: change in mean; model is a constant trend
+      \begin{figure}
+	\includegraphics[scale=0.2]{images/approaches_first_2}
+	\end{figure}
      \end{columns}
+\end{frame}
 
+\begin{frame}
+    \frametitle{Prediction approach}
+  \begin{columns}[T,onlytextwidth]
+      \column{0.5\textwidth}
+	Prediction based approach
+	    \begin{itemize}
+	    	\item Predict with appropriate model
+		\item Calculate difference between prediction and actual data (with appropriate cost function)
+		\item Compare difference with threshold
+	    \end{itemize}
+      \column{0.5\textwidth}
+      Example: change in mean; model is a constant trend
+      \begin{figure}
+	\includegraphics[scale=0.2]{images/approaches_first_3}
+	\end{figure}
+     \end{columns}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Prediction approach}
+  \begin{columns}[T,onlytextwidth]
+      \column{0.5\textwidth}
+	Prediction based approach
+	    \begin{itemize}
+	    	\item Predict with appropriate model
+		\item Calculate difference between prediction and actual data (with appropriate cost function)
+		\item Compare difference with threshold
+	    \end{itemize}
+      \column{0.5\textwidth}
+      Example: change in mean; model is a constant trend
+      \begin{figure}
+	\includegraphics[scale=0.2]{images/approaches_first_4}
+	\end{figure}
+     \end{columns}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Prediction approach}
+  \begin{columns}[T,onlytextwidth]
+      \column{0.5\textwidth}
+	Prediction based approach
+	    \begin{itemize}
+	    	\item Predict with appropriate model
+		\item Calculate difference between prediction and actual data (with appropriate cost function)
+		\item Compare difference with threshold
+	    \end{itemize}
+      \column{0.5\textwidth}
+      Example: change in mean; model is a constant trend
+      \begin{figure}
+	\includegraphics[scale=0.2]{images/approaches_first_5}
+	\end{figure}
+     \end{columns}
 \end{frame}
 
 
 \begin{frame}
-    \frametitle{Methods}
+    \frametitle{Approximation approach}
 
+  \begin{columns}[T,onlytextwidth]
+      \column{0.5\textwidth}
+      \textbf{Approximation based approach}
+	    \begin{itemize}
+	    	\item Approximate time series with appropriate model
+		\item Calculate difference between overall approximation and approximation of left and right halves (with appropriate cost function)
+		\item Find points to minimize difference
+	    \end{itemize}
+     \column{0.5\textwidth}
+      Example: change in mean; model is a constant trend
+      	\begin{figure}
+		\includegraphics[scale=0.2]{images/approaches_second_1}
+	\end{figure}
+     \end{columns}
+
+\end{frame}
+
+\begin{frame}
+    \frametitle{Approximation approach}
   \begin{columns}[T,onlytextwidth]
       \column{0.5\textwidth}
 	Approximation based approach
 	    \begin{itemize}
 	    	\item Approximate time series with appropriate model
-		\item Calculate difference between approximation and actual data (with appropriate cost function)
+		\item Calculate difference between overall approximation and approximation of left and right halves (with appropriate cost function)
 		\item Find points to minimize difference
 	    \end{itemize}
-	Number of change points can be either known and unknown
+     \column{0.5\textwidth}
+      Example: change in mean; model is a constant trend
+      	\begin{figure}
+		\includegraphics[scale=0.2]{images/approaches_second_2}
+	\end{figure}
+     \end{columns}
+\end{frame}
 
+\begin{frame}
+    \frametitle{Approximation approach}
+  \begin{columns}[T,onlytextwidth]
+      \column{0.5\textwidth}
+	Approximation based approach
+	    \begin{itemize}
+	    	\item Approximate time series with appropriate model
+		\item Calculate difference between overall approximation and approximation of left and right halves (with appropriate cost function)
+		\item Find points to minimize difference
+	    \end{itemize}
+     \column{0.5\textwidth}
+      Example: change in mean; model is a constant trend
+      	\begin{figure}
+		\includegraphics[scale=0.2]{images/approaches_second_3}
+	\end{figure}
+     \end{columns}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Approximation approach}
+  \begin{columns}[T,onlytextwidth]
+      \column{0.5\textwidth}
+	Approximation based approach
+	    \begin{itemize}
+	    	\item Approximate time series with appropriate model
+		\item Calculate difference between overall approximation and approximation of left and right halves (with appropriate cost function)
+		\item Find points to minimize difference
+	    \end{itemize}
+     \column{0.5\textwidth}
+      Example: change in mean; model is a constant trend
+      	\begin{figure}
+		\includegraphics[scale=0.2]{images/approaches_second_4}
+	\end{figure}
+     \end{columns}
+\end{frame}
+
+
+\begin{frame}
+    \frametitle{Things to define}
+	 
+	\begin{itemize}
+	    	\item Model. Based on what changes do you want to find and specifics of your time series
+			\begin{itemize}
+			\item Mean - level (constant trend)
+			\item Regression - trend
+			\item Mean + Daily fluctuations
+			\item Others
+			\end{itemize}
+		\item Window size. Based on time frame that is significant to your task
+		\item Cost function. Based on what changes do you want to find.
+		\item Threshold. Depends on small or big changes would you like to find
+		\item Search method. Based on your task
+	    \end{itemize}
+
+ \end{frame}
+
+\section{Applications to real data}
+
+
+
+\begin{frame}
+    \frametitle{Applications to real data}
+ 
+ Let's apply these approaches to real data (described in previous section).
+We have chosen two models.
+Mean model as basic model which works generally good:
+$$ \mathrm{X} = A + \epsilon $$
+Model, which appropriate to our data nature:
+$$ \mathrm{X} = a + C\cos(2\pi \frac{n}{24} + \phi) + \epsilon $$
+Cost function will be mean square error
+% $$ c(\mathbf{X}_I) = \sum_{t \in I}||\mathbf{X}_t - \bar{\mathbf{X}} ||_2^2 $$
+Window size will be 48 points.
+ 
+ \end{frame}
+
+
+
+\begin{frame}
+    \frametitle{Applications to real data. Mean change}
+  \begin{columns}[T,onlytextwidth]
+      \column{0.5\textwidth}
+	\begin{figure}
+	\includegraphics[height=6.5cm]{images/methods_comparison_1_1}
+	\end{figure}
+	
+      \column{0.5\textwidth}
+	\begin{figure}
+	\includegraphics[height=6.5cm]{images/methods_comparison_1_2}
+	\end{figure}
+	
      \end{columns}
 
 \end{frame}
 
 
-
 \begin{frame}
-    \frametitle{SSA for change point detection}
-
-Singular spectrum analysis (SSA) method can be used to allocate change points.
-Let $x_1,x_2,...$ be a time series and $N, L, l, p, q$ be fixed integers so that $0 \leq l < L \leq N/2$ and $ 0 \leq p < q$. The SSA change point detection algorithm is as follows.
-For each $ n = 0,1,...$ we compute:
-    \begin{itemize}
-    	\item the base matrix $\mathbb{X}^{(n)}$,
-	\item the lag-covariance matrix $\mathbb{R}_n = \mathbb{X}^{(n)}(\mathbb{X}^{(n)})^{\top}$,
-	\item the SVD of $\mathbb{R}_n$,
-	\item $\mathbf{\nu}_{n.I,p,q}$, the sum of the squared Euclidean distances between the vectors $\mathbb{X}_j^{(n)} (j = p+1,...,q$ and the l-dimensional subspace $L_{n,I}$, and
-	\item $S_n$, the normalized squared distance.
-    \end{itemize}
- Large values of $S_n$ indicate a change in the time series.
-
-This method has the following parameters:
-	\begin{itemize}
-		\item $N$ --- window size for base matrix
-		\item $L, I$ --- SSA window and number of eigenvectors
-		\item $p, q$ --- window size for test matrix
-		\item threshold
-	\end{itemize}
-\end{frame}
-
-\begin{frame}
-    \frametitle{SSA in action. Mean change}
-
-Let's try to apply SSA algorithm to real time series mentioned above. With manually settled parameters.
+    \frametitle{Applications to real data. Mean change}
+  \begin{columns}[T,onlytextwidth]
+      \column{0.5\textwidth}
 \begin{figure}
-	\textbf{Mean change}
-	\includegraphics[scale=0.10]{images/017_mean_cp}
-	\textbf{Detection}
-	N = 48, L = 24, I = 5, p = 49, q = L, threshold = 0.15
-	\includegraphics[scale=0.10]{images/018_mean_cp_detected}
+\includegraphics[scale=0.2]{images/methods_comparison_2}
 \end{figure}
-
-Works good for mean change
-
-\end{frame}
-
-\begin{frame}
-    \frametitle{SSA in action. Variance change}
-
-\begin{figure}
-	\includegraphics[scale=0.10]{images/019_variance_cp}
-	N = 48, L = 24, I = 5, p = 49, q = L, threshold = 0.15
-	\includegraphics[scale=0.10]{images/020_variance_cp_detected}
-\end{figure}
-
-Works good for variance change
-
-\end{frame}
-
-\begin{frame}
-    \frametitle{SSA in action. Period change}
-
-\begin{figure}
-	\includegraphics[scale=0.10]{images/025_period_cp}
-	N = 48, L = 24, I = 5, p = 49, q = L, threshold = 0.1
-	\includegraphics[scale=0.10]{images/026_period_cp_detected}
-\end{figure}
-
-Works well for period change
-
-\end{frame}
-
-
-\begin{frame}
-    \frametitle{SSA in action. Point change}
-
-\begin{figure}
-	\includegraphics[scale=0.10]{images/021_point_cp}
-	N = 48, L = 24, I = 5, p = 49, q = L, threshold = 0.1
-	\includegraphics[scale=0.10]{images/022_point_cp_detected}
-\end{figure}
-
-Doesn't work for point change.
-The reason is that we always move window from left to the right.
-
-\end{frame}
-
-\begin{frame}
-    \frametitle{SSA in action. Point change}
-    
-Let's try to reverse the time series each time we find change point.
-
-\begin{figure}
-	\includegraphics[scale=0.10]{images/023_point_cp_2}
-	N = 48, L = 24, I = 5, p = 49, q = L, threshold = 0.1
-	\includegraphics[scale=0.10]{images/024_point_cp_detected_2}
-\end{figure}
-
-Using this upgrade we make SSA algorithm working for point change as well
-
-\end{frame}
-
-
-\begin{frame}
-    \frametitle{Long time series}
-
-	\begin{itemize}
-		\item We have 5 time series 2856 points each. It is impressions time series for different countries hourly for 17 weeks.
-		\item We have tagged change points manually in all these time series
-	\end{itemize}
-
-\end{frame}
-
-
-\begin{frame}
-    \frametitle{Country A}
-\begin{figure}
-	\includegraphics[scale=0.30]{images/028_country_a}
-	In time series for Country A we manually detected 6 change points. First one - mean change along with variance change. Second one - variance change. Third one - point change. Fourth one - variance change. Fifth and sixth - points change.
-\end{figure}
-\end{frame}
-
-\begin{frame}
-    \frametitle{Country B}
-\begin{figure}
-	\includegraphics[scale=0.30]{images/029_country_b}
-	In time series for Country B we manually detected 2 change points. First one - mean change along with variance change. Second one - mean change along with variance change.
-\end{figure}
-\end{frame}
-
-\begin{frame}
-    \frametitle{Country C}
-\begin{figure}
-	\includegraphics[scale=0.30]{images/030_country_c}
-	In time series for Country C we manually detected 5 change points. First, second and fifth - mean change along with variance change (similar to country A). Third - variance change. Fourth - point change
-\end{figure}
-\end{frame}
-
-\begin{frame}
-    \frametitle{Country D}
-\begin{figure}
-	\includegraphics[scale=0.30]{images/031_country_d}
-	In time series for Country D only one change point was manually detected - mean change along with variance change.
-\end{figure}
-\end{frame}
-
-\begin{frame}
-    \frametitle{Country E}
-\begin{figure}
-	\includegraphics[scale=0.30]{images/032_country_e}
-	In time series for Country E there is only one change point - mean change.
-\end{figure}
+      \column{0.5\textwidth}
+	    \begin{itemize}
+	    	\item All models find significant change in mean pretty good
+		\item Prediction approach with Mean model works worse here, because of relatively small window between no change and change point
+	    \end{itemize}
+     \end{columns}
 \end{frame}
 
 
 
-
 \begin{frame}
-    \frametitle{Another change point detection approach}
+    \frametitle{Applications to real data. Outlier}
+  \begin{columns}[T,onlytextwidth]
+      \column{0.5\textwidth}
+	\begin{figure}
+	\includegraphics[height=6.5cm]{images/methods_comparison_2_1}
+	\end{figure}
 	
-	\begin{itemize}
-		\item Apart from SSA there is another approach to find change points
-		\item We can define change point detection problem as minimizing contrast function:
-		$$ \mathbb{V}(\mathbf{t},\mathrm{X}) := \sum_{i=1}^K c(x_{t_i}...x_{t+1}) $$, where $c()$ --- some cost function, and $x_{t_i}...x_{t+1}$ --- sub series of initial time series
-		\item When quantity of change points $K$ is known the problem is:
-		$$ \min_t{\mathbb{V}(\mathbf{t},\mathrm{X})} $$
-		\item When quantity of change points unknown, then additional parameter penalty is added:
-		$$ \min_t{\mathbb{V}(\mathbf{t},\mathrm{X})} + pen(\mathbf{t},\mathrm{X}) $$
-	\end{itemize}
+      \column{0.5\textwidth}
+	\begin{figure}
+	\includegraphics[height=6.5cm]{images/methods_comparison_2_2}
+	\end{figure}
+	
+     \end{columns}
 
-Thus, such approach can be described as follows steps:
+\end{frame}
 
-	\begin{itemize}
-		\item Choosing cost function
-		\item Minimizing contrast function
-		\item Searching for change points quantity (when unknown beforehand)
-	\end{itemize}
+\begin{frame}
+    \frametitle{Applications to real data. Outlier}
+  \begin{columns}[T,onlytextwidth]
+      \column{0.5\textwidth}
+	\begin{figure}
+	\includegraphics[scale=0.2]{images/methods_comparison_4}
+	\end{figure}
+      \column{0.5\textwidth}
+	    \begin{itemize}
+	    	\item Approximation approach with Mean model show noisy result
+		\item Along with that, to detect such change with Approximation Mean we need to reduce threshold ten times
+	    \end{itemize}
+     \end{columns}
+      
 \end{frame}
 
 
 \begin{frame}
-    \frametitle{Cost functions}
+    \frametitle{Applications to real data. Periodic component change}
+  \begin{columns}[T,onlytextwidth]
+      \column{0.5\textwidth}
+	\begin{figure}
+	\includegraphics[height=6.5cm]{images/methods_comparison_3_1}
+	\end{figure}
 	
-	There could be plenty of cost functions. Let's describe the most popular
-	\begin{itemize}
-		\item Mean absolute deviation. It finds changes in medians.
-		$$ c(\mathbf{X}_I) = \sum_{t \in I}||\mathbf{X}_t - \bar{\mathbf{X}} ||_1 $$
-		\item Mean squared deviation. It finds changes in means.
-		$$ c(\mathbf{X}_I) = \sum_{t \in I}||\mathbf{X}_t - \bar{\mathbf{X}} ||_2^2 $$
-		\item Kernel based method
-		$$ c(\mathbf{X}_I) = \sum_{t\in I} ||\Phi (\mathbf{X}_t) - \bar{\mu} ||_{\mathcal{H}}^2 $$
-		\item Autoregression
-		$$ c(\mathbf{X}_I) = \min_{\delta \in \mathbb{R}_p}\sum||\mathbf{X}_t - \delta'z_t||_2^2 $$
-	\end{itemize}
-
+      \column{0.5\textwidth}
+	\begin{figure}
+	\includegraphics[height=6.5cm]{images/methods_comparison_3_2}
+	\end{figure}
+	
+     \end{columns}
 
 \end{frame}
 
+\begin{frame}
+    \frametitle{Applications to real data. Periodic component change}
+  \begin{columns}[T,onlytextwidth]
+      \column{0.5\textwidth}
+	\begin{figure}
+	\includegraphics[scale=0.2]{images/methods_comparison_6}
+	\end{figure}
+      \column{0.5\textwidth}
+	    \begin{itemize}
+	    	\item To find detailed change point we need to reduce threshold significantly
+		\item Cos model works better in such cases, because it is fitted to structure of time series
+	    \end{itemize}
+     \end{columns}
+\end{frame}
 
 \begin{frame}
-    \frametitle{Cost functions. Continue}
-	
-	We can also create our own cost function.
-	Fore example, according to understanding of our time series we can assume that it can be described with such model:
-	$$ \mathrm{X} = a + C\cos(2\pi \frac{n}{24}) + S \sin(2\pi \frac{n}{24}) + \epsilon $$
-	Then cost function can be:
-	$$ c(\mathbf{X}_I) = \sum_{t \in I}||\mathbf{X}_t - (a + C\cos(2\pi \frac{n}{24}) + S \sin(2\pi \frac{n}{24})) ||_2^2 $$
+    \frametitle{Applications to real data. Overview}
+
+\begin{table}
+\centering
+Models thresholds
+\begin{tabular}[t]{|p{8em}|p{5em}|p{5em}|p{5em}|p{5em}|}
+\hline
+  & Pred. Mean & Pred. Sin & Approx. Mean & Approx. Sin\\
+\hline
+Change in mean & 0.3 (0.25 - 0.35) & 0.2 (0.05 - 0.35) & 0.2 (0.01 - 0.4) & 1.0 (0.01 - 2.0)\\
+\hline
+Local change (outlier) & 0.3 (0.2 - 0.5) & 0.1 (0.05 - 0.2) & 0.02 (0.01 - 0.03) & 0.3 (0.01 - 0.6)\\
+\hline
+Change in periodic component & 0.26 (0.22 - 0.30) & 0.05 (0.04 - 0.07) & 0.005 (0.001 - 0.010) & 0.05 (0.01 - 0.12)\\
+\hline
+\end{tabular}
+\end{table}
+
+\begin{itemize}
+	\item Prediction approach looks less robust than approximation, because it has less distance between lowest and highest scores.
+	\item Mean model finds change points well. But when we need to find some changes, which does not affect mean of time series, we need to apply some other models
+	\item You should choose threshold depending on how detailed changes would you like to find
+\end{itemize}
+
 \end{frame}
 
 \begin{frame}
     \frametitle{Search method}
-	
-	Apart from cost function we need to choose method of search change points.
-	There are several well researched methods, we will use one of them --- window method.
-	Idea is straightforward: 
-	\begin{itemize}
-		\item Choosing wide of the window $w$
-		\item Then algorithm slides across the time series with this window
-		\item On each iteration it splits time series into two sub series
-		\item Then for each sub series special metric is calculated:
-		$$ d(x_{u..v},x_{v..w}) = c(x_{u..w}) - c(x_{u..v}) - c(x_{v..w}) $$
-	\end{itemize}
-	
-\end{frame}
+We can search for change points differently
+\begin{itemize}
+	\item Force (always from left to right). Good for alerts.
+	\item Back (always from right to left). Good for forecast.
+	\item Force and back (time series and each time series searched from both ends). Good for analysis of historical data.
+\end{itemize}
+
+  \begin{columns}[T,onlytextwidth]
+      \column{0.5\textwidth}
+      Force method:
+	\begin{figure}
+	\includegraphics[scale=0.15]{images/022_point_cp_detected}
+	\end{figure}
+      \column{0.5\textwidth}
+      Force and back method:
+	\begin{figure}
+	\includegraphics[scale=0.15]{images/methods_comparison_4}
+	\end{figure}
+
+     \end{columns}
 
 
-\begin{frame}
-    \frametitle{Applying approach to the real data}
-	
-	Let's try to apply all of the mentioned cost functions to the time series described above
-	\begin{table}[]
-\begin{tabular}{llllll}
-          & custom function & L1     & L2     & RBF    & Autoregression \\
-Country A & 1.3582          & 0.2507 & 1.305  & 0.6877 & 2.3939         \\
-Country B & 0.3312          & 0.0942 & 0.3312 & 0.8267 & 0.4111         \\
-Country C & 1.2686          & 0.3407 & 1.1478 & 0.4265 & 1.6971         \\
-Country D & 0.0007          & 0.0007 & 0.0007 & 0.0011 & 0.0025         \\
-Country E & 0.4982          & 0.013  & 0.7521 & 0.0042 & 0.3022        
-\end{tabular}
-\end{table}
-
-The best result shows $L_1$ cost function (mean absolute deviation).
-	
 \end{frame}
 
 \begin{frame}
-    \frametitle{Applying approach to the real data. Contine}
+    \frametitle{Applications to real data. Long time series}
+For the final model we chose Approximation approach with Mean model, threshold = 0.4 and force-back search method.
+Let's take a look how does it work on a real long time series:
+  \begin{columns}[T,onlytextwidth]
+      \column{0.5\textwidth}
+	\begin{figure}
+	\includegraphics[scale=0.16]{images/long_ts_1}
+	\end{figure}
+      \column{0.5\textwidth}
+      	\begin{figure}
+	\includegraphics[scale=0.16]{images/long_ts_2}
+	\end{figure}
+
+     \end{columns}
+\end{frame}
+
+
+% \begin{frame}
+%    \frametitle{What about trend change?}
+
+% Above models don't really work here:
+
+%   \begin{columns}[T,onlytextwidth]
+%       \column{0.5\textwidth}
+% 	\begin{figure}
+% 	\includegraphics[height=5.5cm]{images/methods_comparison_4_1}
+% 	\end{figure}
 	
-	Let's take a look on the data
+%       \column{0.5\textwidth}
+% 	\begin{figure}
+% 	\includegraphics[height=5.5cm]{images/methods_comparison_4_2}
+% 	\end{figure}
+	
+%      \end{columns}
+
+% \end{frame}
+
+% \begin{frame}
+%     \frametitle{Model for trend change detection}
+    
+
+% We can just add linear trend part (B) to our model:
+% $$ \mathrm{X} = a + Bn + C\cos(2\pi \frac{n}{24}) + S \sin(2\pi \frac{n}{24}) + \epsilon $$
+
+% \begin{figure}
+% \includegraphics[scale=0.25]{images/methods_comparison_5_1}
+% \end{figure}
+
+% To allocate trend change we can aggregate data on daily level. Then apply change point detection with linear regression (as an example) model
+% \end{frame}
+
+
+\begin{frame}
+    \frametitle{How to choose best parameters?}
+
+
+Supervised machine learning techniques can be applied if the data are tagged by change-points.
+\newline
+
+We can estimate parameters mentioned above compare quality of change point detection using cross validation.
+\newline
+Quality can be estimated as sum of distance between real indexes and estimated indexes normalized by length of time series: $$\sum_{i=1}^K \frac{|\widehat{t_i} - t_i|}{N}$$	
+
+It works perfectly, when our time series is tagged with change points.
+
+ \end{frame}
+
+\begin{frame}
+    \frametitle{Machine learning for parameters estimation}
+
+In real world there is no objectively good or bad tagging in this problem. So sometimes it is hard to tag the time series.
+
 \begin{figure}
-	\includegraphics[scale=0.10]{images/033_country_a_cp}
-	\includegraphics[scale=0.10]{images/034_country_b_cp}
-	\includegraphics[scale=0.10]{images/035_country_c_cp}
-	\includegraphics[scale=0.10]{images/036_country_d_cp}
-	\includegraphics[scale=0.10]{images/037_country_e_cp}
+\includegraphics[scale=0.2]{images/examples_tagging}
 \end{figure}
 
-Most of the time looks pretty good.
-\end{frame}
+The possible solutions:
+	    \begin{itemize}
+	    	\item Tag it accordingly to what's important for business
+		\item Estimate quality on higher level of task
+	    \end{itemize}
 
-\begin{frame}
-    \frametitle{Applying approach to the real data. Contine}
-	
-	Above case was when we defined number of change points in advance. But in real life problems most of the time do not know it.
-	Thus let's try to calculate quantity of change points, using following penalty function:
-	$$ pen_{BIC, L_2}(t) := \sigma \log{T}, $$
-	Here is the results on number of change points:
-	
-	Country A --- Actual amount: 8; Predicted amount: 5 
-	
-	Country B  --- Actual amount: 2; Predicted amount: 2 
-	
-	Country C --- Actual amount: 6; Predicted amount: 6 
-
-	Country D --- Actual amount: 1; Predicted amount: 2 
-	
-	Country E --- Actual amount: 1; Predicted amount: 1 
-	
-\end{frame}
-
-
-\section{Airpush cases}
-
-\begin{frame}
-    \frametitle{Airpush cases. Fraud elimination}
-    \begin{itemize}
-    	\item Apps minutely requests data
-	\item Red flag: strong pattern.
-	\item Can be a automated bots behind pattern
-    \end{itemize}
-    \begin{figure}
-	\textbf{Clean application}
-	\includegraphics[scale=0.10]{images/007_case_1}
-	\textbf{Fraud application}
-	\includegraphics[scale=0.10]{images/008_case_1}
-     \end{figure}
-	
-\end{frame}
-
-
-\begin{frame}
-    \frametitle{Airpush cases. Fraud elimination}
-    \begin{itemize}
-    	\item Goal: to be able to find such apps automatically
-	\item We can reach this goal using frequency analysis
-    \end{itemize}
-    The framework can be described as follows:
-   	 \begin{enumerate}
-	 \item Apply logarithm to time series to stabilyze amplitude
- 	 \item Remove trend (low frequent part) from time series
-	 \item Apply Fourier transform to time series
-	 \item Estimate the distribution of periodogram values
-	 \item Compare distributions of each application with a distribution of white noise (which is exponential) using Kullback–Leibler divergence 
-	 \item If divergence $>$ threshold, then application is marked as suspicious
-	\end{enumerate}
-\end{frame}
+ \end{frame}
 
 
 
 \begin{frame}
-    \frametitle{Airpush cases. Fraud elimination}
-    \framesubtitle{1. Apply logarithm}
-    \begin{figure}
-	\textbf{Clean application}
-	\includegraphics[scale=0.10]{images/009_case_1}
-	\textbf{Fraud application}
-	\includegraphics[scale=0.10]{images/010_case_1}
-     \end{figure}
+    \frametitle{Airpush experience}
+    
+All these methods allow us to construct alert system which consists of two parts:
+
+ \begin{itemize}
+	    	\item Hourly level model, which allocates changes in mean, variance, periodic component and detects anomalies
+		\item Daily level model which allocates changes in trend
+\end{itemize}
+
+We can split overall impressions time series by any important dimension, such as countries, ad formats, applications, etc.
+Applying described methods can help us to identify change points automatically in every big enough country/applications/application/ad format time series.
+\newline
+In addition, we can adjust thresholds adaptively by monitoring for false alerts.
+
 \end{frame}
 
 \begin{frame}
-    \frametitle{Airpush cases. Fraud elimination}
-    \framesubtitle{2. Remove trend}
-    \begin{figure}
-	\textbf{Clean application}
-	\includegraphics[scale=0.10]{images/011_case_1}
-	\textbf{Fraud application}
-	\includegraphics[scale=0.10]{images/012_case_1}
-     \end{figure}
+    \frametitle{Next steps}
+    
+But we can move forward. Instead of plain alerts we can develop smart alerts system.
+Instead of sending notification on each separate case (which could be a lot of at once). It aggregates alerts and send you only a summary, such as:
+
+ \begin{itemize}
+	    	\item Countries: 167 out of 196 had change
+		\item Ad formats: 6 out of 8 had change
+		\item Applications: 1 out of 3000 had change
+\end{itemize}
+
+It means that something affected almost all countries and almost all ad formats, \textbf{but} only one application. That is why most probably real root of change is the application, so we want to be notified only about this application.
+
 \end{frame}
 
-\begin{frame}
-    \frametitle{Airpush cases. Fraud elimination}
-    \framesubtitle{3. Apply Fourier transform}
-    \begin{figure}
-	\textbf{Clean application}
-	\includegraphics[scale=0.10]{images/013_case_1}
-	\textbf{Fraud application}
-	\includegraphics[scale=0.10]{images/014_case_1}
-     \end{figure}
-\end{frame}
 
 \begin{frame}
-    \frametitle{Airpush cases. Fraud elimination}
-    \framesubtitle{4. Estimate the distribution of periodogram values}
-    \begin{figure}
-	\textbf{Clean application}
-	\includegraphics[scale=0.10]{images/015_case_1}
-	\textbf{Fraud application}
-	\includegraphics[scale=0.10]{images/016_case_1}
-     \end{figure}
-\end{frame}
+    \frametitle{Conclusion}
 
-\begin{frame}
-    \frametitle{Airpush cases. Fraud elimination}
-    \framesubtitle{5. Compare distributions}
-    \begin{itemize}
-    	\item Clean app score: 0.09
-	\item Fraud app score: 1.87
-    \end{itemize}
-\end{frame}
+	    \begin{itemize}
+	    	\item Change point detection system can help us to react on significant change fast
+		\item There are many parameters and methods, but any parameter can be tuned iteratively
+		\item Scope of application much wider than alert system
+	    \end{itemize}
+
+ \end{frame}
+
+
+% \begin{frame}
+%     \frametitle{Conclusion}
+
+% 	    \begin{itemize}
+% 	    	\item Main approaches works well on the real data and are good for different applications
+% 		\item Wisely choosing of applicable model is important
+% 		\item We can choose threshold which applicable to our task
+% 		\item Aggregation of periods can help to find more general changes
+% 		\item Change point detection system can help us to react on significant change fast
+% 		\item Accurate tagging will allow to estimate detection quality
+% 	    \end{itemize}
+
+%  \end{frame}
+
 
 \end{document}
