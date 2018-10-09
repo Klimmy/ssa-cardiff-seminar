@@ -620,7 +620,7 @@ What can we do after change point detection:
     \frametitle{Things to define}
 	
 	\begin{itemize}
-	    	\item \textblue{Model}. Based on what changes do you want to find and specifics of your time series
+	    	\item \textblue{Model}. Based on what changes one wants  to find and specifics of time series
 			\begin{itemize}
 			\item Data has a constant trend, we are interested in changes in trend (formal model: in the time (e.g., a hour) with number $n$, $x_n = \mathrm{const} + \mathrm{residual}_n$).
 \smallskip
@@ -628,7 +628,7 @@ What can we do after change point detection:
 \smallskip
 			\item Data has a constant trend with regular (e.g. daily) fluctuations, we are interested in changes in trend or in fluctuations (formal model: $x_n = \mathrm{const} + A\sin(2\pi n/24+\phi) + \mathrm{residual}_n$)
 \smallskip			
-            \item Others
+            \item Other
 			\end{itemize}
 \medskip
 		\item \textblue{Window size}. Based on timeframe that is significant to your task. Larger window causes larger delay of detection.
@@ -878,7 +878,7 @@ Theoretical approach based on the model of data. Drawback: usually, real-world d
 
 \bigskip
 \item
-Supervised machine-learning approach when data are tagged in advance and then learning is performed by comparison of found change points and tagged change points. Drawback: it is a hard task to tag the data in advance.
+Supervised machine-learning approach when data is labelled in advance and then learning is performed by comparison of found change points versus labelled points. Drawback: it is a hard task to label the data in advance.
 
 \bigskip
 \item
@@ -929,7 +929,7 @@ importance. If there are too many false alerts, then threshold increases.
 \end{itemize}
 \bigskip
 \item
-Overall impressions data are splitted by countries, ad formats, applications,
+Overall impressions data is split by countries, ad formats, applications,
 since the sources of changes can be specific for these characteristics.
 %Applying described methods can help us to identify change points automatically in every big enough %country/applications/application/ad format time series.
 \bigskip
@@ -942,10 +942,10 @@ Thresholds are adjusted adaptively by monitoring for false alerts.
 \begin{frame}
     \frametitle{Next steps}
 
-But we can move forward.
+We can move forward even further.
 Instead of plain alerts we can develop \textblue{smart alert system}:\\
 
-Instead of sending notification on each separate case (which could be a lot of at once), the system aggregates alerts and send you only a summary.
+Instead of sending notification on each separate case (which could be a lot of at once), the system aggregates alerts and sends you only a summary.
 
 \bigskip
 Example:
@@ -958,7 +958,7 @@ Example:
 \end{itemize}
 
 \medskip
- This example means that something affected almost all countries and almost all ad formats, \textbf{but} only one application. That is why most probably real root of change is the application, so we want to be notified only about this application.
+ This example means that something affected almost all countries and almost all ad formats, \textbf{but} only one application. That is why most likely the real root cause of change is the application, so we only want to be notified only about this application.
 
 \end{frame}
 
@@ -987,12 +987,12 @@ is much wider.
 %     \frametitle{Conclusion}
 
 % 	    \begin{itemize}
-% 	    	\item Main approaches works well on the real data and are good for different applications
-% 		\item Wisely choosing of applicable model is important
-% 		\item We can choose threshold which applicable to our task
+% 	    	\item Main approaches work well on real data and are good for different applications
+% 		\item Wise choice of applicable model is important
+% 		\item We can choose threshold which is applicable to our task
 % 		\item Aggregation of periods can help to find more general changes
-% 		\item Change point detection system can help us to react on significant change fast
-% 		\item Accurate tagging will allow to estimate detection quality
+% 		\item Change point detection system can help us to react fast on significant change 
+% 		\item Accurate labelling will allow to estimate detection quality
 % 	    \end{itemize}
 
 %  \end{frame}
