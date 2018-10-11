@@ -205,7 +205,7 @@ Commonly time series can be decomposed $X = T + S + E$
         \begin{figure}
         \centering
 	\textbf{Time series. Decomposition example}
-        \includegraphics[height=5cm]{images/impressions_stl_3}
+        \includegraphics[height=5cm]{images/impressions_stl_6}
 	\end{figure}
 	
         \end{column}
@@ -653,8 +653,8 @@ What can we do after change point detection:
     Consider global changes in constant trend and local anomalies
 
 \medskip
-    \includegraphics[height = 2cm, width = 4.5cm]{images/cp_mean_2}\qquad
-    \includegraphics[height = 2cm, width = 4.5cm]{images/005_point}
+    \includegraphics[height = 2.5cm, width = 5.0cm]{images/cp_mean_2}\qquad
+    \includegraphics[height = 2.5cm, width = 5.0cm]{images/005_point}
 
 \medskip
 \textblue{Data structure}: constant or slowly varying trend + daily (24-hours) regular oscillations + some noise
@@ -760,6 +760,43 @@ Two \textblue{methods}: prediction- and approximation- based ones.
 
 \end{frame}
 
+\begin{frame}
+    \frametitle{Applications to real data. Long time series}
+
+\textblue{Final model}: Approximation-based approach with the model with constant trend, threshold = 0.2 and forward-backward search method.
+
+\bigskip
+\medskip
+	\includegraphics[height = 5.5cm, width = 11.0cm]{images/long_ts_1}
+\end{frame}
+
+\begin{frame}
+    \frametitle{Direction of CP search}
+We can search for change points in different directions
+\begin{itemize}
+	\item Forward (always from left to right). Good for alerts.
+\medskip
+	\item Backward (always from right to left). Good for forecast.
+\medskip
+	\item Both forward and backward to localize the change interval. Good for analysis of historical data.
+\end{itemize}
+
+\smallskip
+  \begin{columns}[T,onlytextwidth]
+      \column{0.5\textwidth}
+      Forward method:
+	\includegraphics[scale=0.15]{images/022_point_cp_detected}
+      \column{0.5\textwidth}
+      Forward-backward method:
+
+      \vspace*{0.3cm}
+	\includegraphics[scale=0.15]{images/methods_comparison_4}
+     \end{columns}
+
+
+\end{frame}
+
+
 
 \begin{frame}
     \frametitle{Applications to real data. Discussion}
@@ -791,47 +828,8 @@ threshold can be different.
 
 \end{frame}
 
-\begin{frame}
-    \frametitle{Direction of CP search}
-We can search for change points in different directions
-\begin{itemize}
-	\item Forward (always from left to right). Good for alerts.
-\medskip
-	\item Backward (always from right to left). Good for forecast.
-\medskip
-	\item Both forward and backward to localize the change interval. Good for analysis of historical data.
-\end{itemize}
-
-\smallskip
-  \begin{columns}[T,onlytextwidth]
-      \column{0.5\textwidth}
-      Forward method:
-	\includegraphics[scale=0.15]{images/022_point_cp_detected}
-      \column{0.5\textwidth}
-      Forward-backward method:
-
-      \vspace*{0.3cm}
-	\includegraphics[scale=0.15]{images/methods_comparison_4}
-     \end{columns}
 
 
-\end{frame}
-
-\begin{frame}
-    \frametitle{Applications to real data. Long time series}
-
-\textblue{Final model}: Approximation-based approach with the model with constant trend, threshold = 0.2 and forward-backward search method.
-
-\bigskip
-Two different countries
-\medskip
-  \begin{columns}[T,onlytextwidth]
-      \column{0.5\textwidth}
-	\includegraphics[scale=0.16]{images/long_ts_1}
-      \column{0.5\textwidth}
-	\includegraphics[scale=0.16]{images/long_ts_3}
-     \end{columns}
-\end{frame}
 
 
 % \begin{frame}
