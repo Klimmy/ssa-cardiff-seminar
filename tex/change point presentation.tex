@@ -611,7 +611,7 @@ What can we do after change point detection:
 	\only<2>{\includegraphics[scale=0.2]{images/approaches_second_2}}
 	\only<3>{\includegraphics[scale=0.2]{images/approaches_second_3}}
 	\only<4,5>{\includegraphics[scale=0.2]{images/approaches_second_4}}
-	\only<5>{Detection function is synchronized with the last point of window}
+	\only<5>{Detection function is synchronized with the middle point of window}
 	\end{figure}
      \end{columns}
 
@@ -650,15 +650,15 @@ What can we do after change point detection:
 
 \begin{enumerate}
 \item
-Theoretical approach based on the model of data. Drawback: usually, real-world data are various and do not fit a model exactly.
+\textblue{Theoretical approach} based on the model of data. Drawback: usually, real-world data are various and do not fit a model exactly.
 
 \bigskip
 \item
-Supervised machine-learning approach when data is labelled in advance and then learning is performed by comparison of found change points versus labelled points. Drawback: it is a hard task to label the data in advance.
+\textblue{Supervised machine-learning approach} when data is labelled in advance and then learning is performed by comparison of found change points versus labelled points. Drawback: it is a hard task to label the data in advance.
 
 \bigskip
 \item
-Empirical approach with adaptive adjustment of the threshold. This is a very promising method:
+\textblue{Empirical approach} with adaptive adjustment of the threshold. This is a very promising method:
 each alert is considered by business people from the viewpoint of its
 importance. If there are too many false alerts, then threshold increases.
 \end{enumerate}
@@ -840,11 +840,11 @@ We can search for change points in different directions
 %\end{table}
 
 \begin{itemize}
-	\item Different methods should be chosen for different types of change points. Prediction-based approach looks more perspective for outliers prediction, whereas Approximation-based approach approved oneself for changes in mean.
+	\item \textbf{Different methods should be chosen for different types of change points.} Prediction-based approach looks more perspective for outliers prediction, whereas Approximation-based approach approved oneself for changes in mean.
 \bigskip
-	\item Model with constant trend finds change points well, despite of clear daily oscillations. However, in more complex cases, it is important to choose a proper model. E.g., the model with constant trend is totally inappropriate for the case of linear trends.
+	\item \textbf{Model with constant trend finds change points well, despite of clear daily oscillations.} However, in more complex cases, it is important to choose a proper model. E.g., the model with constant trend is totally inappropriate for the case of linear trends.
 \bigskip
-	\item Choice of thresholds is a big challenge. Moreover, for different types of change points,
+	\item \textbf{Choice of thresholds is a big challenge.} Moreover, for different types of change points,
 threshold can be different.
 \end{itemize}
 
@@ -993,7 +993,7 @@ is much wider.
 % 		\item Wise choice of applicable model is important
 % 		\item We can choose threshold which is applicable to our task
 % 		\item Aggregation of periods can help to find more general changes
-% 		\item Change point detection system can help us to react fast on significant change 
+% 		\item Change point detection system can help us to react fast on significant change
 % 		\item Accurate labelling will allow to estimate detection quality
 % 	    \end{itemize}
 
