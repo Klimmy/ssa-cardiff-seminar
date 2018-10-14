@@ -534,9 +534,9 @@ What can we do after change point detection:
 			\item Structure can be described by a model\\
              (e.g. the time series is equal to sum of a constant and some oscillations)
 \vspace{0.1cm}
-            \item Structure is abruptly changed; we should detect this change
-\vspace{0.1cm}
-            \item Types of changes are different; therefore, we need different methods to detect
+%            \item Structure is abruptly changed; we should detect this change
+%\vspace{0.1cm}
+%            \item Types of changes are different; therefore, we need different methods to detect
 		\end{itemize}
 
 \vspace{0.2cm}
@@ -579,7 +579,9 @@ What can we do after change point detection:
 	\only<2>{\includegraphics[scale=0.2]{images/approaches_first_3}}
 	\only<3>{\includegraphics[scale=0.2]{images/approaches_first_4}}
 	\only<4,5>{\includegraphics[scale=0.2]{images/approaches_first_5}}
-	\only<5>{Detection function is synchronized with the last point of window}
+	\only<5>{Detection function is synchronized with the \textblue{middle} point of window}
+	\only<6>{\includegraphics[scale=0.2]{images/approaches_first_6}}
+	\only<6>{Detection function is synchronized with the \textblue{last} point of window}
 	\end{figure}
      \end{columns}
 
@@ -642,6 +644,26 @@ What can we do after change point detection:
 
 
  \end{frame}
+
+\begin{frame}
+    \frametitle{Approaches to model and threshold choice}
+
+\begin{enumerate}
+\item
+Theoretical approach based on the model of data. Drawback: usually, real-world data are various and do not fit a model exactly.
+
+\bigskip
+\item
+Supervised machine-learning approach when data is labelled in advance and then learning is performed by comparison of found change points versus labelled points. Drawback: it is a hard task to label the data in advance.
+
+\bigskip
+\item
+Empirical approach with adaptive adjustment of the threshold. This is a very promising method:
+each alert is considered by business people from the viewpoint of its
+importance. If there are too many false alerts, then threshold increases.
+\end{enumerate}
+ \end{frame}
+
 
 \section{Applications to real data}
 
@@ -867,24 +889,6 @@ threshold can be different.
 % \end{frame}
 
 
-\begin{frame}
-    \frametitle{Approaches to model and threshold choice}
-
-\begin{enumerate}
-\item
-Theoretical approach based on the model of data. Drawback: usually, real-world data are various and do not fit a model exactly.
-
-\bigskip
-\item
-Supervised machine-learning approach when data is labelled in advance and then learning is performed by comparison of found change points versus labelled points. Drawback: it is a hard task to label the data in advance.
-
-\bigskip
-\item
-Empirical approach with adaptive adjustment of the threshold. This is a very promising method:
-each alert is considered by business people from the viewpoint of its
-importance. If there are too many false alerts, then threshold increases.
-\end{enumerate}
-
 %Supervised machine learning techniques can be applied if the data are tagged by change-points.
 %\newline
 %
@@ -894,7 +898,7 @@ importance. If there are too many false alerts, then threshold increases.
 %
 %It works perfectly, when our time series is tagged with change points.
 
- \end{frame}
+
 
 %\begin{frame}
 %    \frametitle{Machine learning for parameters estimation}
